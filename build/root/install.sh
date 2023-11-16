@@ -31,6 +31,22 @@ unzip /tmp/scripts-master.zip -d /tmp
 # move shell scripts to /root
 mv /tmp/scripts-master/shell/arch/docker/*.sh /usr/local/bin/
 
+# aur packages
+####
+
+# define aur packages
+# note we are currently using the aur package ' libtorrent-rasterbar-1_2-git' as opposed to
+# the stable aur package 'libtorrent-rasterbar-1' because we require 'python-bindings=ON',
+# failure to enable python-bindings will result in deluge reporting
+# 'ModuleNotFoundError: No module named 'libtorrent''
+aur_packages="7-zip-bin libtorrent-rasterbar-1_2-git"
+
+# call aur install script (arch user repo)
+source aur.sh
+
+# ignore aor package 'libtorrent-rasterbar' to prevent upgrade to libtorrent v2 as libtorrent
+# v2 causes numerous issues, including crashing on unraid due to kernel bug
+sed -i -e 's~IgnorePkg.*~IgnorePkg = filesystem libtorrent-rasterbar~g' '/etc/pacman.conf'
 
 # pacman packages
 ####
@@ -45,15 +61,6 @@ pacman_packages="deluge"
 if [[ ! -z "${pacman_packages}" ]]; then
 	pacman -S --needed $pacman_packages --noconfirm
 fi
-
-# aur packages
-####
-
-# define aur packages
-aur_packages="7-zip-bin"
-
-# call aur install script (arch user repo)
-source aur.sh
 
 # tweaks
 ####
