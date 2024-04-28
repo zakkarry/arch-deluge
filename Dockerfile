@@ -1,5 +1,5 @@
 FROM binhex/arch-base:latest
-LABEL org.opencontainers.image.authors = "binhex"
+LABEL org.opencontainers.image.authors = "binhex (modified by zakkarry)"
 LABEL org.opencontainers.image.source = "https://github.com/binhex/arch-deluge"
 
 # release tag name from buildx arg
@@ -28,7 +28,7 @@ ADD config/nobody/ /home/nobody/
 
 # make executable and run bash scripts to install app
 RUN chmod +x /root/*.sh && \
-	/bin/bash /root/install.sh "${RELEASETAG}" "${TARGETARCH}"
+	/bin/bash /root/install.sh "2.1.1-develop" "amd64"
 
 # docker settings
 #################
