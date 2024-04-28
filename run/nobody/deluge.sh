@@ -32,6 +32,9 @@ curl -s -L --retry 10 --retry-max-time 60 --retry-all-errors \
 	"https://mailfud.org/geoip-legacy/GeoIP.dat.gz" \
 	| gunzip > /usr/share/GeoIP/GeoIP.dat
 
+# fix permissions on geoIP downloaded as root
+chmod -R 777 /usr/share/GeoIP
+
 # begin startup process for deluge
 echo "[info] Attempting to start Deluge..."
 
