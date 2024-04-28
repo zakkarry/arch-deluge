@@ -9,15 +9,15 @@ RELEASETAG="${1}"
 # target arch from buildx arg
 TARGETARCH="${2}"
 
-if [[ -z "${RELEASETAG}" ]]; then
-	echo "[warn] Release tag name from build arg is empty, exiting script..."
-	exit 1
-fi
+# if [[ -z "${RELEASETAG}" ]]; then
+# 	echo "[warn] Release tag name from build arg is empty, exiting script..."
+# 	exit 1
+# fi
 
-if [[ -z "${TARGETARCH}" ]]; then
-	echo "[warn] Target architecture name from build arg is empty, exiting script..."
-	exit 1
-fi
+# if [[ -z "${TARGETARCH}" ]]; then
+# 	echo "[warn] Target architecture name from build arg is empty, exiting script..."
+# 	exit 1
+# fi
 
 # write RELEASETAG to file to record the release tag used to build the image
 echo "IMAGE_RELEASE_TAG=${RELEASETAG}" >> '/etc/image-release'
@@ -42,21 +42,26 @@ mv /tmp/scripts-master/shell/arch/docker/*.sh /usr/local/bin/
 source upd.sh
 
 # define pacman packages
-pacman_packages="deluge"
+pacman_packages="geoip python-geoip"
 
 # install compiled packages using pacman
 if [[ ! -z "${pacman_packages}" ]]; then
 	pacman -S --needed $pacman_packages --noconfirm
+	pacman -Syu --noconfirm
 fi
 
 # aur packages
 ####
 
 # define aur packages
-aur_packages="7-zip-bin"
+aur_packages="7-zip-bin libtorrent-rasterbar-1_2-git deluge-git"
 
 # call aur install script (arch user repo)
 source aur.sh
+
+# ignore aor package 'libtorrent-rasterbar' to prevent upgrade to libtorrent v2 as libtorrent
+# v2 causes numerous issues, including crashing on unraid due to kernel bug
+sed -i -e 's~IgnorePkg.*~IgnorePkg = filesystem libtorrent-rasterbar~g' '/etc/pacman.conf'
 
 # tweaks
 ####
