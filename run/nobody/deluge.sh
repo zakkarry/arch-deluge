@@ -27,6 +27,12 @@ else
 
 fi
 
+# downlad latest GeoIP.dat
+curl -s -L --retry 10 --retry-max-time 60 --retry-all-errors \
+	"https://mailfud.org/geoip-legacy/GeoIP.dat.gz" \
+	| gunzip > /usr/share/GeoIP/GeoIP.dat
+
+# begin startup process for deluge
 echo "[info] Attempting to start Deluge..."
 
 echo "[info] Removing deluge pid file (if it exists)..."
