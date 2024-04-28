@@ -39,7 +39,7 @@ mv /tmp/scripts-master/shell/arch/docker/*.sh /usr/local/bin/
 source upd.sh
 
 # define pacman packages
-pacman_packages="deluge"
+pacman_packages=""
 
 # install compiled packages using pacman
 if [[ ! -z "${pacman_packages}" ]]; then
@@ -50,10 +50,14 @@ fi
 ####
 
 # define aur packages
-aur_packages="7-zip-bin"
+aur_packages="7-zip-bin libtorrent-rasterbar-1_2-git deluge-git"
 
 # call aur install script (arch user repo)
 source aur.sh
+
+# ignore aor package 'libtorrent-rasterbar' to prevent upgrade to libtorrent v2 as libtorrent
+# v2 causes numerous issues, including crashing on unraid due to kernel bug
+sed -i -e 's~IgnorePkg.*~IgnorePkg = filesystem libtorrent-rasterbar~g' '/etc/pacman.conf'
 
 # tweaks
 ####

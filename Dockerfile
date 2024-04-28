@@ -1,5 +1,5 @@
 FROM binhex/arch-base:latest
-LABEL org.opencontainers.image.authors = "binhex"
+LABEL org.opencontainers.image.authors = "binhex (modified by zakkarry)"
 LABEL org.opencontainers.image.source = "https://github.com/binhex/arch-deluge"
 
 # release tag name from buildx arg
