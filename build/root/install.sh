@@ -20,7 +20,7 @@ TARGETARCH="${2}"
 # fi
 
 # write RELEASETAG to file to record the release tag used to build the image
-echo "IMAGE_RELEASE_TAG=${RELEASETAG}" >> '/etc/image-release'
+echo "IMAGE_RELEASE_TAG=${RELEASETAG}" >>'/etc/image-release'
 
 # build scripts
 ####
@@ -92,14 +92,15 @@ sed -i -e "s~peer_id = substitute_chr(peer_id, 6, release_chr)~peer_id = \'-DE21
 install_paths="/home/nobody"
 
 # split comma separated string into list for install paths
-IFS=',' read -ra install_paths_list <<< "${install_paths}"
+IFS=',' read -ra install_paths_list <<<"${install_paths}"
 
 # process install paths in the list
 for i in "${install_paths_list[@]}"; do
 
 	# confirm path(s) exist, if not then exit
 	if [[ ! -d "${i}" ]]; then
-		echo "[crit] Path '${i}' does not exist, exiting build process..." ; exit 1
+		echo "[crit] Path '${i}' does not exist, exiting build process..."
+		exit 1
 	fi
 
 done
@@ -111,15 +112,18 @@ install_paths=$(echo "${install_paths}" | tr ',' ' ')
 chmod -R 775 ${install_paths}
 
 # set permissions for python eggs to be a more restrictive 755, this prevents the warning message thrown by deluge on startup
-mkdir -p /home/nobody/.cache/Python-Eggs ; chmod -R 755 /home/nobody/.cache/Python-Eggs
+mkdir -p /home/nobody/.cache/Python-Eggs
+chmod -R 755 /home/nobody/.cache/Python-Eggs
 
 # disable built-in Deluge Plugin 'stats', as its currently broken in Deluge 2.x and causes log spam
 # see here for details https://dev.deluge-torrent.org/ticket/3310
-chmod 000 /usr/lib/python3*/site-packages/deluge/plugins/Stats*.egg
+# note from zak:
+# this now fixed and will grab the latest updated version by mhertz
+rm -rf /usr/lib/python3*/site-packages/deluge/plugins/Stats*py*.egg
 
 # create file with contents of here doc, note EOF is NOT quoted to allow us to expand current variable 'install_paths'
 # we use escaping to prevent variable expansion for PUID and PGID, as we want these expanded at runtime of init.sh
-cat <<EOF > /tmp/permissions_heredoc
+cat <<EOF >/tmp/permissions_heredoc
 
 # get previous puid/pgid (if first run then will be empty string)
 previous_puid=\$(cat "/root/puid" 2>/dev/null || true)
@@ -150,7 +154,7 @@ rm /tmp/permissions_heredoc
 # env vars
 ####
 
-cat <<'EOF' > /tmp/envvars_heredoc
+cat <<'EOF' >/tmp/envvars_heredoc
 
 export DELUGE_DAEMON_LOG_LEVEL=$(echo "${DELUGE_DAEMON_LOG_LEVEL}" | sed -e 's~^[ \t]*~~;s~[ \t]*$~~')
 if [[ ! -z "${DELUGE_DAEMON_LOG_LEVEL}" ]]; then
