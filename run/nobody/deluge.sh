@@ -27,13 +27,30 @@ else
 
 fi
 
-# downlad latest GeoIP.dat
-curl -s -L --retry 10 --retry-max-time 60 --retry-all-errors \
-	"https://mailfud.org/geoip-legacy/GeoIP.dat.gz" \
-	| gunzip > /usr/share/GeoIP/GeoIP.dat
+# downlad latest GeoIP.dat after aged a week
+geoip_dat_path="/usr/share/GeoIP/GeoIP.dat"
+echo "[info] Checking GeoIP.dat ($geoip_dat_path)..."
 
-# fix permissions on geoIP downloaded as root
-chmod -R 777 /usr/share/GeoIP
+if [ -e "$geoip_dat_path" ]; then
+	current_time=$(date +%s)
+	# file's modification and creation times in seconds since epoch
+	modification_time=$(stat -c %Y "$geoip_dat_path")
+	creation_time=$(stat -c %W "$geoip_dat_path")
+	week_seconds=$((7 * 24 * 60 * 60))
+
+	if (( (current_time - modification_time) > week_seconds )) || (( (current_time - creation_time) > week_seconds )); then
+	echo "[info] Found outdated GeoIP.dat...updating (timeout 30s)"
+		curl -s -L --retry 3 --retry-max-time 30 --retry-all-errors \
+			"https://mailfud.org/geoip-legacy/GeoIP.dat.gz" \
+			| gunzip > /usr/share/GeoIP/GeoIP.dat
+	fi
+else
+	echo "[info] No GeoIP.dat found...updating (timeout 30s)"
+	curl -s -L --retry 3 --retry-max-time 30 --retry-all-errors \
+		"https://mailfud.org/geoip-legacy/GeoIP.dat.gz" \
+		| gunzip > /usr/share/GeoIP/GeoIP.dat
+fi
+
 
 # begin startup process for deluge
 echo "[info] Attempting to start Deluge..."
@@ -53,7 +70,8 @@ done
 echo "[info] Deluge process listening on port 58846"
 
 # run script to check we don't have any torrents in an error state
-/home/nobody/torrentcheck.sh
+# note from zak: the problem this solved has been resolved, not necessary
+# /home/nobody/torrentcheck.sh
 
 if ! pgrep -x "deluge-web" > /dev/null; then
 	echo "[info] Starting Deluge Web UI..."
