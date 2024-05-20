@@ -69,6 +69,9 @@ mkdir -p /home/nobody/.cache/Python-Eggs
 # remove permissions for group and other from the Python-Eggs folder
 chmod -R 700 /home/nobody/.cache/Python-Eggs
 
+# allow everyone to read GeoIP databases
+chmod -R 777 /usr/share/GeoIP
+
 # change peerid to appear to be 2.1.1 stable - note this does not work for all/any private trackers at present
 sed -i -e "s~peer_id = substitute_chr(peer_id, 6, release_chr)~peer_id = \'-DE211s-\'\n        release_chr = \'s\'~g" /usr/lib/python3*/site-packages/deluge/core/core.py
 
@@ -102,7 +105,9 @@ mkdir -p /home/nobody/.cache/Python-Eggs ; chmod -R 755 /home/nobody/.cache/Pyth
 
 # disable built-in Deluge Plugin 'stats', as its currently broken in Deluge 2.x and causes log spam
 # see here for details https://dev.deluge-torrent.org/ticket/3310
-chmod 000 /usr/lib/python3*/site-packages/deluge/plugins/Stats*.egg
+# note from zak:
+# this now fixed and will grab the latest updated version by mhertz
+rm -rf /usr/lib/python3*/site-packages/deluge/plugins/Stats*py*.egg
 
 # create file with contents of here doc, note EOF is NOT quoted to allow us to expand current variable 'install_paths'
 # we use escaping to prevent variable expansion for PUID and PGID, as we want these expanded at runtime of init.sh
