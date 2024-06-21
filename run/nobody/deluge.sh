@@ -38,19 +38,18 @@ if [ -e "$geoip_dat_path" ]; then
 	creation_time=$(stat -c %W "$geoip_dat_path")
 	week_seconds=$((7 * 24 * 60 * 60))
 
-	if (( (current_time - modification_time) > week_seconds )) || (( (current_time - creation_time) > week_seconds )); then
-	echo "[info] Found outdated GeoIP.dat...updating (timeout 30s)"
+	if (((current_time - modification_time) > week_seconds)) || (((current_time - creation_time) > week_seconds)); then
+		echo "[info] Found outdated GeoIP.dat...updating (timeout 30s)"
 		curl -s -L --retry 3 --retry-max-time 30 --retry-all-errors \
-			"https://mailfud.org/geoip-legacy/GeoIP.dat.gz" \
-			| gunzip > /usr/share/GeoIP/GeoIP.dat
+			"https://mailfud.org/geoip-legacy/GeoIP.dat.gz" |
+			gunzip >/usr/share/GeoIP/GeoIP.dat
 	fi
 else
 	echo "[info] No GeoIP.dat found...updating (timeout 30s)"
 	curl -s -L --retry 3 --retry-max-time 30 --retry-all-errors \
-		"https://mailfud.org/geoip-legacy/GeoIP.dat.gz" \
-		| gunzip > /usr/share/GeoIP/GeoIP.dat
+		"https://mailfud.org/geoip-legacy/GeoIP.dat.gz" |
+		gunzip >/usr/share/GeoIP/GeoIP.dat
 fi
-
 
 # begin startup process for deluge
 echo "[info] Attempting to start Deluge..."
@@ -73,7 +72,7 @@ echo "[info] Deluge process listening on port 58846"
 # note from zak: the problem this solved has been resolved, not necessary
 # /home/nobody/torrentcheck.sh
 
-if ! pgrep -x "deluge-web" > /dev/null; then
+if ! pgrep -x "deluge-web" >/dev/null; then
 	echo "[info] Starting Deluge Web UI..."
 
 	# run process non daemonised (blocking)

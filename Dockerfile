@@ -23,6 +23,9 @@ ADD run/nobody/*.sh /home/nobody/
 # add pre-configured config files for nobody
 ADD config/nobody/ /home/nobody/
 
+# add updated stats plugin from repo
+ADD plugins/*.egg /usr/lib/python3.12/site-packages/deluge/plugins/
+
 # install app
 #############
 
