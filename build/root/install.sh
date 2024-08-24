@@ -24,7 +24,6 @@ echo "IMAGE_RELEASE_TAG=${RELEASETAG}" >>'/etc/image-release'
 
 # build scripts
 ####
-pacman -S curl
 
 # download build scripts from github
 curl --connect-timeout 5 --max-time 600 --retry 5 --retry-delay 0 --retry-max-time 60 -o /tmp/scripts-master.zip -L https://github.com/binhex/scripts/archive/master.zip
@@ -37,6 +36,24 @@ mv /tmp/scripts-master/shell/arch/docker/*.sh /usr/local/bin/
 
 # pacman packages
 ####
+cat <<'EOF' >/etc/pacman.d/mirrorlist
+Server = https://iad.mirror.rackspace.com/archlinux/$repo/os/$arch 
+Server = http://mirror.umd.edu/archlinux/$repo/os/$arch 
+Server = http://mirrors.rit.edu/archlinux/$repo/os/$arch 
+Server = https://mirrors.kernel.org/archlinux/$repo/os/$arch
+Server = https://mirror.dal10.us.leaseweb.net/archlinux/$repo/os/$arch
+EOF
+
+pacman -Sy
+pacman -S --needed curl --noconfirm
+
+sed -i \
+	-e 's|https://arch\.mirror\.constant\.com/\$repo/os/\$arch|https://iad.mirror.rackspace.com/archlinux/\$repo/os/\$arch|g' \
+	-e 's|rsync://arch\.mirror\.constant\.com/archlinux/\$repo/os/\$arch|https://mirrors.kernel.org/archlinux/\$repo/os/\$arch|g' \
+	-e 's|rsync://arch\.mirror\.square-r00t\.net/arch/\$repo/os/\$arch|https://mirror.dal10.us.leaseweb.net/archlinux/\$repo/os/\$arch|g' \
+	-e 's|https://arch\.mirror\.square-r00t\.net/\$repo/os/\$arch|http://mirror.umd.edu/archlinux/\$repo/os/\$arch|g' \
+	-e 's|http://arch\.mirror\.square-r00t\.net/\$repo/os/\$arch|http://mirrors.rit.edu/archlinux/\$repo/os/\$arch|g' \
+	/usr/local/bin/upd.sh
 
 # call pacman db and package updater script
 source upd.sh
