@@ -18,13 +18,11 @@ TARGETARCH="${2}"
 # 	echo "[warn] Target architecture name from build arg is empty, exiting script..."
 # 	exit 1
 # fi
-
 # write RELEASETAG to file to record the release tag used to build the image
 echo "IMAGE_RELEASE_TAG=${RELEASETAG}" >>'/etc/image-release'
 
 # build scripts
 ####
-pacman -S curl
 
 # download build scripts from github
 curl --connect-timeout 5 --max-time 600 --retry 5 --retry-delay 0 --retry-max-time 60 -o /tmp/scripts-master.zip -L https://github.com/binhex/scripts/archive/master.zip
@@ -54,6 +52,24 @@ sed -i -e 's~IgnorePkg.*~IgnorePkg = filesystem libtorrent-rasterbar~g' '/etc/pa
 
 # pacman packages
 ####
+cat <<'EOF' >/etc/pacman.d/mirrorlist
+Server = https://iad.mirror.rackspace.com/archlinux/$repo/os/$arch 
+Server = http://mirror.umd.edu/archlinux/$repo/os/$arch 
+Server = http://mirrors.rit.edu/archlinux/$repo/os/$arch 
+Server = https://mirrors.kernel.org/archlinux/$repo/os/$arch
+Server = https://mirror.dal10.us.leaseweb.net/archlinux/$repo/os/$arch
+EOF
+
+pacman -Sy --disable-sandbox
+pacman -S --needed curl wget rsync reflector --noconfirm --disable-sandbox
+
+sed -i \
+	-e 's|https://arch\.mirror\.constant\.com/\$repo/os/\$arch|https://iad.mirror.rackspace.com/archlinux/\$repo/os/\$arch|g' \
+	-e 's|rsync://arch\.mirror\.constant\.com/archlinux/\$repo/os/\$arch|https://mirrors.kernel.org/archlinux/\$repo/os/\$arch|g' \
+	-e 's|rsync://arch\.mirror\.square-r00t\.net/arch/\$repo/os/\$arch|https://mirror.dal10.us.leaseweb.net/archlinux/\$repo/os/\$arch|g' \
+	-e 's|https://arch\.mirror\.square-r00t\.net/\$repo/os/\$arch|http://mirror.umd.edu/archlinux/\$repo/os/\$arch|g' \
+	-e 's|http://arch\.mirror\.square-r00t\.net/\$repo/os/\$arch|http://mirrors.rit.edu/archlinux/\$repo/os/\$arch|g' \
+	/usr/local/bin/upd.sh
 
 # call pacman db and package updater script
 source upd.sh
@@ -63,13 +79,12 @@ pacman_packages="geoip python-geoip"
 
 # install compiled packages using pacman
 if [[ ! -z "${pacman_packages}" ]]; then
-	pacman -S --needed $pacman_packages --noconfirm
-	pacman -Syu --noconfirm
+	pacman -S --needed $pacman_packages --noconfirm --disable-sandbox
+	pacman -Syu --noconfirm --disable-sandbox
 fi
 
 # aur packages
-####
-
+###
 # define aur packages
 aur_packages="7-zip-bin libtorrent-rasterbar-1_2-git deluge-git"
 
