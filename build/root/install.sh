@@ -44,8 +44,8 @@ Server = https://mirrors.kernel.org/archlinux/$repo/os/$arch
 Server = https://mirror.dal10.us.leaseweb.net/archlinux/$repo/os/$arch
 EOF
 
-pacman -Sy
-pacman -S --needed curl wget rsync reflector --noconfirm
+pacman -Sy --disable-sandbox
+pacman -S --needed curl wget rsync reflector --noconfirm --disable-sandbox
 
 sed -i \
 	-e 's|https://arch\.mirror\.constant\.com/\$repo/os/\$arch|https://iad.mirror.rackspace.com/archlinux/\$repo/os/\$arch|g' \
@@ -56,15 +56,15 @@ sed -i \
 	/usr/local/bin/upd.sh
 
 # call pacman db and package updater script
-#source upd.sh
+source upd.sh
 
 # define pacman packages
 pacman_packages="geoip python-geoip"
 
 # install compiled packages using pacman
 if [[ ! -z "${pacman_packages}" ]]; then
-	pacman -S --needed $pacman_packages --noconfirm
-	pacman -Syu --noconfirm
+	pacman -S --needed $pacman_packages --noconfirm --disable-sandbox
+	pacman -Syu --noconfirm --disable-sandbox
 fi
 
 # aur packages
