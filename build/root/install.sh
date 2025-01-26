@@ -41,7 +41,7 @@ mv /tmp/scripts-master/shell/arch/docker/*.sh /usr/local/bin/
 # the stable aur package 'libtorrent-rasterbar-1' because we require 'python-bindings=ON',
 # failure to enable python-bindings will result in deluge reporting
 # 'ModuleNotFoundError: No module named 'libtorrent''
-aur_packages="7-zip-bin libtorrent-rasterbar-1_2-git"
+aur_packages="7zip-bin libtorrent-rasterbar-1_2-git"
 
 # call aur install script (arch user repo)
 source aur.sh
@@ -86,7 +86,7 @@ fi
 # aur packages
 ###
 # define aur packages
-aur_packages="7-zip-bin libtorrent-rasterbar-1_2-git deluge-git"
+aur_packages="p7zip-full-bin libtorrent-rasterbar-1_2-git deluge-git"
 
 # call aur install script (arch user repo)
 source aur.sh
