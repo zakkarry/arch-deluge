@@ -1,6 +1,6 @@
 **Application**
 
-[Deluge](http://deluge-torrent.org/)
+[Deluge](http://deluge-torrent.org/) "develop" branch with libtorrent v1.2.x
 
 **Description**
 
@@ -25,7 +25,7 @@ docker run -d \
     -e UMASK=<umask for created files> \
     -e PUID=<uid for user> \
     -e PGID=<gid for user> \
-    binhex/arch-deluge
+    binhex/arch-deluge:libtorrentv1
 ```
 
 Please replace all user variables in the above command defined by <> with the correct values.
@@ -49,7 +49,7 @@ docker run -d \
     -e UMASK=000 \
     -e PUID=0 \
     -e PGID=0 \
-    binhex/arch-deluge
+    binhex/arch-deluge:libtorrentv1
 ```
 
 **Notes**<br>
@@ -62,8 +62,5 @@ id <username>
 
 Default password for the webui is "deluge"
 ___
-If you appreciate my work, then please consider buying me a beer  :D
-
-[![PayPal donation](https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=MM5E27UX6AUU4)
 
 [Documentation](https://github.com/binhex/documentation) | [Support forum](http://forums.unraid.net/index.php?topic=45820.0)
