@@ -69,7 +69,7 @@ fi
 # aur packages
 ###
 # define aur packages
-aur_packages="p7zip-full-bin libtorrent-rasterbar-1_2-git deluge-git"
+aur_packages="p7zip-full-bin boost1.86 libtorrent-rasterbar-1_2-git deluge-git"
 
 # call aur install script (arch user repo)
 source aur.sh
