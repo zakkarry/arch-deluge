@@ -69,14 +69,14 @@ fi
 # aur packages
 ###
 # define aur packages
-aur_packages="7zip libtorrent-rasterbar-1_2-git deluge-git"
+aur_packages="p7zip-full-bin deluge-git"
 
 # call aur install script (arch user repo)
 source aur.sh
 
 # ignore aor package 'libtorrent-rasterbar' to prevent upgrade to libtorrent v2 as libtorrent
 # v2 causes numerous issues, including crashing on unraid due to kernel bug
-sed -i -e 's~IgnorePkg.*~IgnorePkg = filesystem libtorrent-rasterbar~g' '/etc/pacman.conf'
+#sed -i -e 's~IgnorePkg.*~IgnorePkg = filesystem libtorrent-rasterbar~g' '/etc/pacman.conf'
 
 # tweaks
 ####
